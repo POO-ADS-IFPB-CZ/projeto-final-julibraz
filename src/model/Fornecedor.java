@@ -1,45 +1,48 @@
 package model;
 
+import controller.ProdutoFornecedor;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class Fornecedor extends Base{
-    private String cnpj;
-    private String contato;
-    private String email;
-    private List<Produto> produtos;
 
-    public Fornecedor() {}
+    private List<ProdutoFornecedor> estoque;
 
-    public String getCnpj() {
-        return cnpj;
+    public Fornecedor() {
+        estoque = new ArrayList<>();
     }
 
-    public void setCnpj(String cnpj) {
-        this.cnpj = cnpj;
+    public List<ProdutoFornecedor> getEstoque() {
+        return estoque;
     }
 
-    public String getContato() {
-        return contato;
+    public void adicionarProdutoFornecedor(ProdutoFornecedor produtoFornecedor) {
+        estoque.add(produtoFornecedor);
     }
 
-    public void setContato(String contato) {
-        this.contato = contato;
+    //faz a busca de um estoque pelo seu código
+    public ProdutoFornecedor buscarProdutoPorCodigo(long codigo) {
+        try {
+            return estoque.stream()
+                    .filter(produto -> produto.getProduto().getCodigo() == codigo)
+                    .findFirst()
+                    .orElseThrow(() -> new NoSuchElementException("Produto com código " + codigo + " não encontrado"));
+        } catch (NoSuchElementException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
 
-    public String getEmail() {
-        return email;
+    //atualiza um estoque
+    public void atualizarProduto(Produto produto, double preco, int quantidade) {
+        ProdutoFornecedor produtoFornecedor = buscarProdutoPorCodigo(produto.getCodigo());
+        if(produtoFornecedor != null) {
+            produtoFornecedor.setPreco(preco);
+            produtoFornecedor.setQuantidadeDisponivel(quantidade);
+        }
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public List<Produto> getProdutos() {
-        return produtos;
-    }
-
-    public void setProdutos(List<Produto> produtos) {
-        this.produtos = produtos;
-    }
 
 }
