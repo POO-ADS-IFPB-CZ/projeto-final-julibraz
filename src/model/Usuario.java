@@ -1,34 +1,72 @@
 package model;
 
-public class Usuario {
+import controller.ProdutoFornecedor;
 
-    private String empresa;
-    private String senha;
-    private String cargo;
-    private String email;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
-    public String getEmpresa() {
-        return empresa;
+public class Usuario extends Base {
+
+    private List<Produto> estoqueUsuario;
+
+    public Usuario() {
+        estoqueUsuario = new ArrayList<>();
     }
-    public void setEmpresa(String empresa) {
-        this.empresa = empresa;
+
+    //adiciona produtos ao estoque da empresa
+    public void adicionarProduto(Produto produto, int quantidade) {
+        Produto existente = buscarProdutoPorCodigo(produto.getCodigo());
+        if (existente != null) {
+            existente.setQuantidade(existente.getQuantidade() + quantidade);
+        } else {
+            produto.setQuantidade(quantidade);
+            estoqueUsuario.add(produto);
+        }
     }
-    public String getSenha() {
-        return senha;
+
+    //remove um estoque por completo
+    public void removerProduto(long codigo) {
+        estoqueUsuario.removeIf(produto -> produto.getCodigo() == codigo);
     }
-    public void setSenha(String senha) {
-        this.senha = senha;
+
+    //faz a busca de um estoque pelo seu código
+    public Produto buscarProdutoPorCodigo(long codigo) {
+        try {
+            return estoqueUsuario.stream()
+                    .filter(produto -> produto.getCodigo() == codigo)
+                    .findFirst()
+                    .orElseThrow(() -> new NoSuchElementException("Produto com código " + codigo + " não encontrado"));
+        } catch (NoSuchElementException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
-    public String getCargo() {
-        return cargo;
+
+    //atualiza um estoque
+    public void solicitarProduto(Fornecedor fornecedor, long codigo, int quantidade) {
+        ProdutoFornecedor produtoFornecedor = fornecedor.buscarProdutoPorCodigo(codigo);
+        if (produtoFornecedor != null && produtoFornecedor.getQuantidadeDisponivel() >= quantidade) {
+            produtoFornecedor.setQuantidadeDisponivel(produtoFornecedor.getQuantidadeDisponivel() - quantidade);
+            adicionarProduto(produtoFornecedor.getProduto(), quantidade);
+            System.out.println("Produto solicitado com sucesso!");
+        } else {
+            System.out.println("Quantidade insuficiente ou produto não disponível.");
+        }
+
     }
-    public void setCargo(String cargo) {
-        this.cargo = cargo;
+
+    //faz a remoção de um produto dependedo da quantidade especificada
+    public void removerQuantidade(long codigo, int quantidade) {
+        Produto produto = buscarProdutoPorCodigo(codigo);
+        if (produto != null) {
+            int quantidadeAtual = produto.getQuantidade();
+            if (quantidadeAtual > quantidade) {
+                produto.setQuantidade(quantidadeAtual - quantidade);
+            } else {
+                removerProduto(codigo); //remove o produto se a quantidade for 0 ou menor
+            }
+        }
     }
-    public String getEmail() {
-        return email;
-    }
-    public void setEmail(String email) {
-        this.email = email;
-    }
+
 }
