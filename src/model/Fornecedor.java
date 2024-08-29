@@ -1,12 +1,14 @@
 package model;
 
+import java.util.List;
+
 public class Fornecedor extends Base{
     private String cnpj;
     private String contato;
     private String email;
+    private List<Produto> produtos;
 
-    public Fornecedor() {
-    }
+    public Fornecedor() {}
 
     public String getCnpj() {
         return cnpj;
@@ -32,11 +34,12 @@ public class Fornecedor extends Base{
         this.email = email;
     }
 
-    public void setName(String name) {
-        super.setName(name);
+    public List<Produto> getProdutos() {
+        return produtos;
     }
 
-    public void setCategoria(String categoria) {
-        super.setCategoria(categoria);
+    public void setProdutos(List<Produto> produtos) {
+        this.produtos = produtos;
     }
+
 }

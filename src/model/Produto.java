@@ -1,24 +1,17 @@
 package model;
 
+import java.time.LocalDate;
+import java.util.List;
+
 public class Produto extends Base{
     private long codigo;
     private double valor;
     private String descricao;
     private int quantidade; //quantida em estoque do produto
+    private LocalDate dataValidade;
+    private List<Fornecedor> fornecedor;
 
-
-    public String getNome() {
-        return name;
-    }
-    public void setNome(String name) {
-        this.name = name;
-    }
-    public String getCategoria() {
-        return categoria;
-    }
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
-    }
+    public Produto() {}
 
     public long getCodigo() {
         return codigo;
@@ -43,5 +36,18 @@ public class Produto extends Base{
     }
     public void setQuantidade(int quantidade) {
         this.quantidade = quantidade;
+    }
+    public LocalDate getDataValidade() {
+        return dataValidade;
+    }
+    public void setDataValidade(LocalDate dataValidade) {
+        this.dataValidade = dataValidade;
+    }
+
+    public List<Fornecedor> getFornecedor() {
+        return fornecedor;
+    }
+    public void setFornecedor(List<Fornecedor> fornecedor) {
+        this.fornecedor = fornecedor;
     }
 }
