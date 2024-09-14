@@ -4,12 +4,14 @@ import controller.ProdutoFornecedor;
 import exceptions.ProdutoNaoEncontradoException;
 import exceptions.QuantidadeInsuficienteException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public class Usuario extends Base {
+public class Usuario extends Base implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     private List<Produto> estoqueUsuario;
 
     public Usuario() {
