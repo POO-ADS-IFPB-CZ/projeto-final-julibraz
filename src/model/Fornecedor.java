@@ -3,11 +3,13 @@ package model;
 import controller.ProdutoFornecedor;
 import exceptions.ProdutoNaoEncontradoException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Fornecedor extends Base{
+public class Fornecedor extends Base implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     private List<ProdutoFornecedor> estoque;
 
     public Fornecedor() {
