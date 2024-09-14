@@ -187,7 +187,7 @@ public class Main {
         System.out.print("Digite a senha: ");
         String senha = scanner.nextLine();
 
-        if (usuario.varificarSenha(senha)) {
+        if (usuario.verificarSenha(senha)) {
             System.out.println("Senha correta!");
         } else {
             System.out.println("Senha incorreta.");
