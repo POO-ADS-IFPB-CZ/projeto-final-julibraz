@@ -1,10 +1,12 @@
 package model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Produto extends Base{
+public class Produto extends Base implements Serializable {
+    private static final long serialVersionUID = 1L;
     private long codigo;
     private double valor;
     private String descricao;
