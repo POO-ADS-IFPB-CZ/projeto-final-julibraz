@@ -1,10 +1,10 @@
 package model;
 
 import controller.ProdutoFornecedor;
+import exceptions.ProdutoNaoEncontradoException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 public class Fornecedor extends Base{
 
@@ -22,17 +22,12 @@ public class Fornecedor extends Base{
         estoque.add(produtoFornecedor);
     }
 
-    //faz a busca de um estoque pelo seu código
+    //faz a busca de um produto pelo seu código
     public ProdutoFornecedor buscarProdutoPorCodigo(long codigo) {
-        try {
-            return estoque.stream()
-                    .filter(produto -> produto.getProduto().getCodigo() == codigo)
-                    .findFirst()
-                    .orElseThrow(() -> new NoSuchElementException("Produto com código " + codigo + " não encontrado"));
-        } catch (NoSuchElementException e) {
-            System.out.println(e.getMessage());
-            return null;
-        }
+        return estoque.stream()
+                .filter(produto -> produto.getProduto().getCodigo() == codigo)
+                .findFirst()
+                .orElseThrow(() -> new ProdutoNaoEncontradoException(codigo));
     }
 
     //atualiza um estoque
@@ -40,9 +35,14 @@ public class Fornecedor extends Base{
         ProdutoFornecedor produtoFornecedor = buscarProdutoPorCodigo(produto.getCodigo());
         if(produtoFornecedor != null) {
             produtoFornecedor.setPreco(preco);
-            produtoFornecedor.setQuantidadeDisponivel(quantidade);
+            produtoFornecedor.setQuantidade(quantidade);
         }
     }
+
+    public void removerProduto(long codigoProduto) {
+        estoque.removeIf(produtoFornecedor -> produtoFornecedor.getProduto().getCodigo() == codigoProduto);
+    }
+
 
 
 }

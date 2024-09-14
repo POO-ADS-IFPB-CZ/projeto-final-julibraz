@@ -8,13 +8,13 @@ import model.Produto;
 public class ProdutoFornecedor {
     private Fornecedor fornecedor;
     private Produto produto;
-    private int quantidadeDisponivel;
+    private int quantidade;
     private double preco;
 
-    public ProdutoFornecedor(Fornecedor fornecedor, Produto produto, int quantidadeDisponivel, double preco) {
+    public ProdutoFornecedor(Fornecedor fornecedor, Produto produto, int quantidade, double preco) {
         this.fornecedor = fornecedor;
         this.produto = produto;
-        this.quantidadeDisponivel = quantidadeDisponivel;
+        this.quantidade = quantidade;
         this.preco = preco;
     }
 
@@ -42,11 +42,11 @@ public class ProdutoFornecedor {
         this.preco = preco;
     }
 
-    public int getQuantidadeDisponivel() {
-        return quantidadeDisponivel;
+    public int getQuantidade() {
+        return quantidade;
     }
 
-    public void setQuantidadeDisponivel(int quantidadeDisponivel) {
-        this.quantidadeDisponivel = quantidadeDisponivel;
+    public void setQuantidade(int quantidade) {
+        this.quantidade = quantidade;
     }
 }
