@@ -1,6 +1,8 @@
 package model;
 
 import controller.ProdutoFornecedor;
+import exceptions.ProdutoNaoEncontradoException;
+import exceptions.QuantidadeInsuficienteException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,8 +48,8 @@ public class Usuario extends Base {
     //atualiza um estoque
     public void solicitarProduto(Fornecedor fornecedor, long codigo, int quantidade) {
         ProdutoFornecedor produtoFornecedor = fornecedor.buscarProdutoPorCodigo(codigo);
-        if (produtoFornecedor != null && produtoFornecedor.getQuantidadeDisponivel() >= quantidade) {
-            produtoFornecedor.setQuantidadeDisponivel(produtoFornecedor.getQuantidadeDisponivel() - quantidade);
+        if (produtoFornecedor != null && produtoFornecedor.getQuantidade() >= quantidade) {
+            produtoFornecedor.setQuantidade(produtoFornecedor.getQuantidade() - quantidade);
             adicionarProduto(produtoFornecedor.getProduto(), quantidade);
             System.out.println("Produto solicitado com sucesso!");
         } else {
@@ -61,11 +63,13 @@ public class Usuario extends Base {
         Produto produto = buscarProdutoPorCodigo(codigo);
         if (produto != null) {
             int quantidadeAtual = produto.getQuantidade();
-            if (quantidadeAtual > quantidade) {
+            if (quantidadeAtual >= quantidade) {
                 produto.setQuantidade(quantidadeAtual - quantidade);
             } else {
-                removerProduto(codigo); //remove o produto se a quantidade for 0 ou menor
+                throw new QuantidadeInsuficienteException(quantidadeAtual, quantidade);
             }
+        }else {
+            throw new ProdutoNaoEncontradoException(codigo);
         }
     }
 

@@ -62,10 +62,16 @@ public class Base {
     }
 
     public void setCnpj(String cnpj) {
-        this.cnpj = cnpj;
+        //cobre o formato padrão de CNPJ: XX.XXX.XXX/XXXX-XX
+        String CNPJ_REGEX = "\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}";
+        if (Pattern.compile(CNPJ_REGEX).matcher(cnpj).matches()) {
+            this.cnpj = cnpj;
+        } else {
+            throw new IllegalArgumentException("CNPJ inválido");
+        }
     }
 
-    public boolean varificarSenha(String senha) {
+    public boolean verificarSenha(String senha) {
         return gerarHashSenha(senha).equals(this.senhaHash);
     }
     public void setSenha(String senha) {
