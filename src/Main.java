@@ -1,196 +1,98 @@
 
+import controller.ProdutoFornecedor;
+import controller.ProdutoRepository;
 import model.Fornecedor;
 import model.Produto;
 import model.Usuario;
-import controller.ProdutoRepository;
-
-import java.util.Scanner;
+import exceptions.ProdutoNaoEncontradoException;
+import exceptions.QuantidadeInsuficienteException;
 
 public class Main {
-
-    private static ProdutoRepository produtoRepo = new ProdutoRepository();
-    private static Scanner scanner = new Scanner(System.in);
-
     public static void main(String[] args) {
-        int opcao;
-        do {
-            exibirMenu();
-            opcao = scanner.nextInt();
-            scanner.nextLine(); // Consome a nova linha
-            switch (opcao) {
-                case 1 -> cadastrarFornecedor();
-                case 2 -> cadastrarUsuario();
-                case 3 -> cadastrarProduto();
-                case 4 -> atualizarProduto();
-                case 5 -> removerQuantidadeProduto();
-                case 6 -> removerProduto();
-                case 7 -> listarProdutos();
-                case 8 -> verificarSenhaUsuario();
-                case 0 -> System.out.println("Saindo...");
-                default -> System.out.println("Opção inválida. Tente novamente.");
-            }
-        } while (opcao != 0);
-    }
+        // Criação de instâncias
+        ProdutoRepository repo = new ProdutoRepository();
 
-    private static void exibirMenu() {
-        System.out.println("===== Sistema de Controle de Estoque =====");
-        System.out.println("1. Cadastrar Fornecedor");
-        System.out.println("2. Cadastrar Usuário");
-        System.out.println("3. Cadastrar Produto");
-        System.out.println("4. Atualizar Produto");
-        System.out.println("5. Remover Quantidade de Produto");
-        System.out.println("6. Remover Produto");
-        System.out.println("7. Listar Produtos");
-        System.out.println("8. Verificar Senha de Usuário");
-        System.out.println("0. Sair");
-        System.out.print("Escolha uma opção: ");
-    }
+        // Criação de fornecedores
+        Fornecedor fornecedor1 = new Fornecedor();
+        fornecedor1.setId(1);
+        fornecedor1.setNome("Fornecedor A");
+        fornecedor1.setEmail("fornecedorA@example.com");
+        fornecedor1.setCnpj("12.345.678/0001-95");
 
-    private static void cadastrarFornecedor() {
-        Fornecedor fornecedor = new Fornecedor();
+        Fornecedor fornecedor2 = new Fornecedor();
+        fornecedor2.setId(2);
+        fornecedor2.setNome("Fornecedor B");
+        fornecedor2.setEmail("fornecedorB@example.com");
+        fornecedor2.setCnpj("98.765.432/0001-10");
 
-        System.out.print("ID do Fornecedor: ");
-        fornecedor.setId(scanner.nextLong());
-        scanner.nextLine();
+        // Adicionando fornecedores ao repositório
+        repo.adicionarFornecedor(fornecedor1);
+        repo.adicionarFornecedor(fornecedor2);
 
-        System.out.print("Nome do Fornecedor: ");
-        fornecedor.setNome(scanner.nextLine());
+        // Criação de produtos
+        Produto produto1 = new Produto();
+        produto1.setCodigo(1001);
+        produto1.setNome("Produto 1");
+        produto1.setDescricao("Descrição do Produto 1");
+        produto1.setValor(10.0);
+        produto1.setQuantidade(50);
 
-        System.out.print("Email do Fornecedor: ");
-        fornecedor.setEmail(scanner.nextLine());
+        Produto produto2 = new Produto();
+        produto2.setCodigo(1002);
+        produto2.setNome("Produto 2");
+        produto2.setDescricao("Descrição do Produto 2");
+        produto2.setValor(20.0);
+        produto2.setQuantidade(30);
 
-        System.out.print("CNPJ do Fornecedor: ");
-        fornecedor.setCnpj(scanner.nextLine());
+        // Adicionando produtos ao repositório
+        repo.salvar(produto1);
+        repo.salvar(produto2);
 
-        System.out.print("Contato do Fornecedor: ");
-        fornecedor.setContato(scanner.nextLine());
+        // Criando instâncias de ProdutoFornecedor
+        ProdutoFornecedor pf1 = new ProdutoFornecedor(fornecedor1, produto1, 50, 10.0);
+        ProdutoFornecedor pf2 = new ProdutoFornecedor(fornecedor2, produto2, 30, 20.0);
 
-        produtoRepo.adicionarFornecedor(fornecedor);
-        System.out.println("Fornecedor cadastrado com sucesso!");
-    }
+        // Adicionando produtos ao estoque dos fornecedores
+        fornecedor1.adicionarProdutoFornecedor(pf1);
+        fornecedor2.adicionarProdutoFornecedor(pf2);
 
-    private static void cadastrarUsuario() {
+        // Criação de usuário
         Usuario usuario = new Usuario();
+        usuario.setId(1);
+        usuario.setNome("Usuário A");
+        usuario.setEmail("usuarioA@example.com");
+        usuario.setCnpj("12.345.678/0001-95");
 
-        System.out.print("ID do Usuário: ");
-        usuario.setId(scanner.nextLong());
-        scanner.nextLine();
+        // Adicionando produtos ao estoque do usuário
+        usuario.adicionarProduto(produto1, 10);
+        usuario.adicionarProduto(produto2, 5);
 
-        System.out.print("Nome do Usuário: ");
-        usuario.setNome(scanner.nextLine());
+        // Teste de métodos
+        System.out.println("Estoque do Usuário:");
+        usuario.getEstoqueUsuario().forEach(prod ->
+                System.out.println(prod.getNome() + " - Quantidade: " + prod.getQuantidade()));
 
-        System.out.print("Email do Usuário: ");
-        usuario.setEmail(scanner.nextLine());
-
-        System.out.print("CNPJ do Usuário: ");
-        usuario.setCnpj(scanner.nextLine());
-
-        System.out.print("Senha do Usuário: ");
-        usuario.setSenha(scanner.nextLine());
-
-        produtoRepo.adicionarUsuario(usuario);
-        System.out.println("Usuário cadastrado com sucesso!");
-    }
-
-    private static void cadastrarProduto() {
-        Produto produto = new Produto();
-
-        System.out.print("Código do Produto: ");
-        produto.setCodigo(scanner.nextLong());
-        scanner.nextLine();
-
-        System.out.print("Nome do Produto: ");
-        produto.setNome(scanner.nextLine());
-
-        System.out.print("Descrição do Produto: ");
-        produto.setDescricao(scanner.nextLine());
-
-        System.out.print("Quantidade do Produto: ");
-        produto.setQuantidade(scanner.nextInt());
-
-        System.out.print("Valor do Produto: ");
-        produto.setValor(scanner.nextDouble());
-        scanner.nextLine();
-
-        produtoRepo.salvar(produto);
-        System.out.println("Produto cadastrado com sucesso!");
-    }
-
-    private static void atualizarProduto() {
-        System.out.print("Código do Produto a atualizar: ");
-        long codigo = scanner.nextLong();
-        scanner.nextLine();
-
-        Produto produto = produtoRepo.buscarPorCodigo(codigo);
-        if (produto == null) {
-            System.out.println("Produto não encontrado.");
-            return;
+        // Testando solicitação de produtos
+        System.out.println("\nSolicitando produtos...");
+        try {
+            usuario.solicitarProduto(fornecedor1, 1001, 5);
+            usuario.solicitarProduto(fornecedor2, 1002, 5);
+        } catch (QuantidadeInsuficienteException | ProdutoNaoEncontradoException e) {
+            System.out.println(e.getMessage());
         }
 
-        System.out.print("Novo Nome do Produto: ");
-        produto.setNome(scanner.nextLine());
+        // Testando remoção de produtos
+        System.out.println("\nRemovendo produtos...");
+        usuario.removerProduto(1001);
+        fornecedor1.removerProduto(1001);
 
-        System.out.print("Nova Descrição do Produto: ");
-        produto.setDescricao(scanner.nextLine());
+        // Verificando o resultado das operações
+        System.out.println("\nEstoque do Usuário após remoção:");
+        usuario.getEstoqueUsuario().forEach(prod ->
+                System.out.println(prod.getNome() + " - Quantidade: " + prod.getQuantidade()));
 
-        System.out.print("Nova Quantidade do Produto: ");
-        produto.setQuantidade(scanner.nextInt());
-
-        System.out.print("Novo Valor do Produto: ");
-        produto.setValor(scanner.nextDouble());
-        scanner.nextLine();
-
-        produtoRepo.atualizar(produto);
-        System.out.println("Produto atualizado com sucesso!");
-    }
-
-    private static void removerQuantidadeProduto() {
-        System.out.print("Código do Produto: ");
-        long codigo = scanner.nextLong();
-
-        System.out.print("Quantidade a remover: ");
-        int quantidade = scanner.nextInt();
-
-        produtoRepo.removerQuantidade(codigo, quantidade);
-        System.out.println("Quantidade removida com sucesso!");
-    }
-
-    private static void removerProduto() {
-        System.out.print("Código do Produto a remover: ");
-        long codigo = scanner.nextLong();
-
-        produtoRepo.removerProduto(codigo);
-        System.out.println("Produto removido com sucesso!");
-    }
-
-    private static void listarProdutos() {
-        System.out.println("Produtos no estoque:");
-        for (Produto produto : produtoRepo.listarProdutos()) {
-            System.out.println("Código: " + produto.getCodigo() +
-                    ", Nome: " + produto.getNome() +
-                    ", Quantidade: " + produto.getQuantidade() +
-                    ", Valor: " + produto.getValor());
-        }
-    }
-
-    private static void verificarSenhaUsuario() {
-        System.out.print("ID do Usuário: ");
-        long id = scanner.nextLong();
-        scanner.nextLine();
-
-        Usuario usuario = produtoRepo.buscarUsuarioPorId(id);
-        if (usuario == null) {
-            System.out.println("Usuário não encontrado.");
-            return;
-        }
-
-        System.out.print("Digite a senha: ");
-        String senha = scanner.nextLine();
-
-        if (usuario.verificarSenha(senha)) {
-            System.out.println("Senha correta!");
-        } else {
-            System.out.println("Senha incorreta.");
-        }
+        System.out.println("\nEstoque do Fornecedor 1 após remoção:");
+        fornecedor1.getEstoque().forEach(pf ->
+                System.out.println(pf.getProduto().getNome() + " - Quantidade: " + pf.getQuantidade()));
     }
 }

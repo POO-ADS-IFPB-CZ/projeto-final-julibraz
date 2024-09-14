@@ -16,7 +16,7 @@ public class Usuario extends Base {
         estoqueUsuario = new ArrayList<>();
     }
 
-    //adiciona produtos ao estoque da empresa
+    // Adiciona produtos ao estoque da empresa
     public void adicionarProduto(Produto produto, int quantidade) {
         Produto existente = buscarProdutoPorCodigo(produto.getCodigo());
         if (existente != null) {
@@ -27,12 +27,12 @@ public class Usuario extends Base {
         }
     }
 
-    //remove um estoque por completo
+    // Remove um produto por completo
     public void removerProduto(long codigo) {
         estoqueUsuario.removeIf(produto -> produto.getCodigo() == codigo);
     }
 
-    //faz a busca de um estoque pelo seu código
+    // Faz a busca de um produto pelo seu código
     public Produto buscarProdutoPorCodigo(long codigo) {
         try {
             return estoqueUsuario.stream()
@@ -45,7 +45,7 @@ public class Usuario extends Base {
         }
     }
 
-    //atualiza um estoque
+    // Atualiza a quantidade de um produto
     public void solicitarProduto(Fornecedor fornecedor, long codigo, int quantidade) {
         ProdutoFornecedor produtoFornecedor = fornecedor.buscarProdutoPorCodigo(codigo);
         if (produtoFornecedor != null && produtoFornecedor.getQuantidade() >= quantidade) {
@@ -55,10 +55,9 @@ public class Usuario extends Base {
         } else {
             System.out.println("Quantidade insuficiente ou produto não disponível.");
         }
-
     }
 
-    //faz a remoção de um produto dependedo da quantidade especificada
+    // Faz a remoção de uma quantidade específica de um produto
     public void removerQuantidade(long codigo, int quantidade) {
         Produto produto = buscarProdutoPorCodigo(codigo);
         if (produto != null) {
@@ -68,9 +67,13 @@ public class Usuario extends Base {
             } else {
                 throw new QuantidadeInsuficienteException(quantidadeAtual, quantidade);
             }
-        }else {
+        } else {
             throw new ProdutoNaoEncontradoException(codigo);
         }
     }
 
+    // Retorna o estoque do usuário
+    public List<Produto> getEstoqueUsuario() {
+        return estoqueUsuario;
+    }
 }
