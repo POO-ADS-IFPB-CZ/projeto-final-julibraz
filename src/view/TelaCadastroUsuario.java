@@ -10,7 +10,7 @@ public class TelaCadastroUsuario extends JFrame {
     private JTextField campoNome;
     private JTextField campoEmail;
     private JTextField campoCategoria;
-    private JTextField campoCNPJ;
+    private JTextField campoCPF;
     private GerenciaDao<Usuario> usuarioDao;
 
     public TelaCadastroUsuario(GerenciaDao<Usuario> usuarioDao) {
@@ -35,9 +35,9 @@ public class TelaCadastroUsuario extends JFrame {
         campoCategoria = new JTextField();
         panel.add(campoCategoria);
 
-        panel.add(new JLabel("CNPJ:"));
-        campoCNPJ = new JTextField();
-        panel.add(campoCNPJ);
+        panel.add(new JLabel("CPF:"));
+        campoCPF = new JTextField();
+        panel.add(campoCPF);
 
         JButton btnSalvar = new JButton("Salvar");
         panel.add(btnSalvar);
@@ -51,13 +51,13 @@ public class TelaCadastroUsuario extends JFrame {
         String nome = campoNome.getText();
         String email = campoEmail.getText();
         String categoria = campoCategoria.getText();
-        String cnpj = campoCNPJ.getText();
+        String cpf = campoCPF.getText();
 
         Usuario usuario = new Usuario();
         usuario.setNome(nome);
         usuario.setEmail(email);
         usuario.setCategoria(categoria);
-        usuario.setCnpj(cnpj);
+        usuario.setCpf(cpf);
 
         usuarioDao.salvar(usuario);
         dispose();

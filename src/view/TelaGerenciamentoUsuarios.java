@@ -20,7 +20,7 @@ public class TelaGerenciamentoUsuarios extends JFrame {
         modeloTabela.addColumn("Nome");
         modeloTabela.addColumn("Email");
         modeloTabela.addColumn("Categoria");
-        modeloTabela.addColumn("CNPJ");
+        modeloTabela.addColumn("CPF");
 
         tabelaUsuarios = new JTable(modeloTabela);
         JScrollPane scrollPane = new JScrollPane(tabelaUsuarios);
@@ -30,7 +30,7 @@ public class TelaGerenciamentoUsuarios extends JFrame {
         JTextField campoNome = new JTextField();
         JTextField campoEmail = new JTextField();
         JTextField campoCategoria = new JTextField();
-        JTextField campoCNPJ = new JTextField();
+        JTextField campoCPF = new JTextField();
 
         painelEntrada.add(new JLabel("Nome:"));
         painelEntrada.add(campoNome);
@@ -38,8 +38,8 @@ public class TelaGerenciamentoUsuarios extends JFrame {
         painelEntrada.add(campoEmail);
         painelEntrada.add(new JLabel("Categoria:"));
         painelEntrada.add(campoCategoria);
-        painelEntrada.add(new JLabel("CNPJ:"));
-        painelEntrada.add(campoCNPJ);
+        painelEntrada.add(new JLabel("CPF:"));
+        painelEntrada.add(campoCPF);
 
         JButton btnAdicionar = new JButton("Adicionar");
         JButton btnEditar = new JButton("Editar");
@@ -54,11 +54,11 @@ public class TelaGerenciamentoUsuarios extends JFrame {
         painelBotoes.add(btnVoltar);
 
         btnAdicionar.addActionListener(e -> {
-            adicionarUsuario(campoNome, campoEmail, campoCategoria, campoCNPJ);
+            adicionarUsuario(campoNome, campoEmail, campoCategoria, campoCPF);
         });
 
         btnEditar.addActionListener(e -> {
-            editarUsuario(campoNome, campoEmail, campoCategoria, campoCNPJ);
+            editarUsuario(campoNome, campoEmail, campoCategoria, campoCPF);
         });
 
         btnRemover.addActionListener(e -> {
@@ -81,7 +81,7 @@ public class TelaGerenciamentoUsuarios extends JFrame {
                 campoNome.setText((String) modeloTabela.getValueAt(linhaSelecionada, 1));
                 campoEmail.setText((String) modeloTabela.getValueAt(linhaSelecionada, 2));
                 campoCategoria.setText((String) modeloTabela.getValueAt(linhaSelecionada, 3));
-                campoCNPJ.setText((String) modeloTabela.getValueAt(linhaSelecionada, 4));
+                campoCPF.setText((String) modeloTabela.getValueAt(linhaSelecionada, 4));
             }
         });
     }
@@ -90,32 +90,32 @@ public class TelaGerenciamentoUsuarios extends JFrame {
         modeloTabela.setRowCount(0); // Limpa a tabela antes de carregar os usuários
         Set<Usuario> usuarios = usuarioDao.getAll();
         for (Usuario usuario : usuarios) {
-            Object[] rowData = new Object[]{usuario.getId(), usuario.getNome(), usuario.getEmail(), usuario.getCategoria(), usuario.getCnpj()};
+            Object[] rowData = new Object[]{usuario.getId(), usuario.getNome(), usuario.getEmail(), usuario.getCategoria(), usuario.getCpf()};
             modeloTabela.addRow(rowData);
         }
     }
 
-    private void adicionarUsuario(JTextField campoNome, JTextField campoEmail, JTextField campoCategoria, JTextField campoCNPJ) {
+    private void adicionarUsuario(JTextField campoNome, JTextField campoEmail, JTextField campoCategoria, JTextField campoCPF) {
         String nome = campoNome.getText();
         String email = campoEmail.getText();
         String categoria = campoCategoria.getText();
-        String cnpj = campoCNPJ.getText();
+        String cpf = campoCPF.getText();
         try {
             Usuario usuario = new Usuario();
             usuario.setNome(nome);
             usuario.setEmail(email);
             usuario.setCategoria(categoria);
-            usuario.setCnpj(cnpj);
+            usuario.setCpf(cpf);
 
             usuarioDao.salvar(usuario);
             carregarUsuarios();
-            limparCampos(campoNome, campoEmail, campoCategoria, campoCNPJ);
+            limparCampos(campoNome, campoEmail, campoCategoria, campoCPF);
         } catch (IllegalArgumentException e) {
             JOptionPane.showMessageDialog(this, e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void editarUsuario(JTextField campoNome, JTextField campoEmail, JTextField campoCategoria, JTextField campoCNPJ) {
+    private void editarUsuario(JTextField campoNome, JTextField campoEmail, JTextField campoCategoria, JTextField campoCPF) {
         int linhaSelecionada = tabelaUsuarios.getSelectedRow(); // Verifica se uma linha foi selecionada
         if (linhaSelecionada >= 0) {
             // Obter o ID do usuário selecionado na tabela
@@ -129,7 +129,7 @@ public class TelaGerenciamentoUsuarios extends JFrame {
                 usuario.setNome(campoNome.getText());
                 usuario.setEmail(campoEmail.getText());
                 usuario.setCategoria(campoCategoria.getText());
-                usuario.setCnpj(campoCNPJ.getText());
+                usuario.setCpf(campoCPF.getText());
 
                 // Tenta atualizar o usuário no arquivo de persistência
                 boolean atualizado = usuarioDao.atualizar(usuario);
@@ -139,7 +139,7 @@ public class TelaGerenciamentoUsuarios extends JFrame {
                     carregarUsuarios();
 
                     // Limpar os campos de entrada
-                    limparCampos(campoNome, campoEmail, campoCategoria, campoCNPJ);
+                    limparCampos(campoNome, campoEmail, campoCategoria, campoCPF);
 
                     // Exibir mensagem de sucesso
                     JOptionPane.showMessageDialog(this, "Usuário atualizado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
@@ -181,10 +181,10 @@ public class TelaGerenciamentoUsuarios extends JFrame {
         return null;
     }
 
-    private void limparCampos(JTextField campoNome, JTextField campoEmail, JTextField campoCategoria, JTextField campoCNPJ) {
+    private void limparCampos(JTextField campoNome, JTextField campoEmail, JTextField campoCategoria, JTextField campoCPF) {
         campoNome.setText("");
         campoEmail.setText("");
         campoCategoria.setText("");
-        campoCNPJ.setText("");
+        campoCPF.setText("");
     }
 }
