@@ -124,7 +124,7 @@ public class TelaGerenciamentoUsuarios extends JFrame {
         int linhaSelecionada = tabelaUsuarios.getSelectedRow();
         if (linhaSelecionada >= 0) {
             long id = (long) modeloTabela.getValueAt(linhaSelecionada, 0);
-            Usuario usuario = new Usuario(); // Obter o usuário pelo ID
+            Usuario usuario = new Usuario();
             usuarioDao.deletar(usuario);
             atualizarTabela();
         } else {

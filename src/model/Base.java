@@ -1,11 +1,12 @@
 package model;
 
+import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class Base {
+public class Base implements Serializable {
     private long id;
     private String nome;
     private String categoria;

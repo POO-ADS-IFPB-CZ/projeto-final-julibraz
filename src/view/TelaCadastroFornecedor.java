@@ -64,25 +64,25 @@ public class TelaCadastroFornecedor extends JFrame {
         String cnpj = txtCNPJ.getText();
         String email = txtEmail.getText();
         long id = Long.parseLong(txtId.getText());
-       try {
-           if (fornecedor == null) {
-               fornecedor = new Fornecedor();
-               fornecedor.setNome(nome);
-               fornecedor.setCnpj(cnpj);
-               fornecedor.setEmail(email);
-               fornecedor.setId(id);
-               fornecedorTableModel.adicionarFornecedor(fornecedor);
-               fornecedorDao.salvar(fornecedor);
-           } else {
-               fornecedor.setNome(nome);
-               fornecedor.setCnpj(cnpj);
-               fornecedorTableModel.fireTableDataChanged();
-               fornecedorDao.atualizar(fornecedor);
-           }
+        try {
+            if (fornecedor == null) {
+                fornecedor = new Fornecedor();
+                fornecedor.setNome(nome);
+                fornecedor.setCnpj(cnpj);
+                fornecedor.setEmail(email);
+                fornecedor.setId(id);
+                fornecedorTableModel.adicionarFornecedor(fornecedor);
+                fornecedorDao.salvar(fornecedor);
+            } else {
+                fornecedor.setNome(nome);
+                fornecedor.setCnpj(cnpj);
+                fornecedorTableModel.fireTableDataChanged();
+                fornecedorDao.atualizar(fornecedor);
+            }
 
-           dispose();
-       }catch (IllegalArgumentException e) {
-           JOptionPane.showMessageDialog(this, e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-       }
+            dispose();
+        }catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }
