@@ -72,9 +72,22 @@ public class TelaGerenciamentoUsuarios extends JFrame {
         add(painelBotoes, BorderLayout.SOUTH);
 
         carregarUsuarios();
+
+        // Adiciona um listener de seleção para preencher os campos de texto ao selecionar um usuário
+        tabelaUsuarios.getSelectionModel().addListSelectionListener(e -> {
+            int linhaSelecionada = tabelaUsuarios.getSelectedRow();
+            if (linhaSelecionada >= 0) {
+                // Preenche os campos de texto com os dados do usuário selecionado
+                campoNome.setText((String) modeloTabela.getValueAt(linhaSelecionada, 1));
+                campoEmail.setText((String) modeloTabela.getValueAt(linhaSelecionada, 2));
+                campoCategoria.setText((String) modeloTabela.getValueAt(linhaSelecionada, 3));
+                campoCNPJ.setText((String) modeloTabela.getValueAt(linhaSelecionada, 4));
+            }
+        });
     }
 
     private void carregarUsuarios() {
+        modeloTabela.setRowCount(0); // Limpa a tabela antes de carregar os usuários
         Set<Usuario> usuarios = usuarioDao.getAll();
         for (Usuario usuario : usuarios) {
             Object[] rowData = new Object[]{usuario.getId(), usuario.getNome(), usuario.getEmail(), usuario.getCategoria(), usuario.getCnpj()};
@@ -87,34 +100,55 @@ public class TelaGerenciamentoUsuarios extends JFrame {
         String email = campoEmail.getText();
         String categoria = campoCategoria.getText();
         String cnpj = campoCNPJ.getText();
-    try {
-        Usuario usuario = new Usuario();
-        usuario.setNome(nome);
-        usuario.setEmail(email);
-        usuario.setCategoria(categoria);
-        usuario.setCnpj(cnpj);
+        try {
+            Usuario usuario = new Usuario();
+            usuario.setNome(nome);
+            usuario.setEmail(email);
+            usuario.setCategoria(categoria);
+            usuario.setCnpj(cnpj);
 
-        usuarioDao.salvar(usuario);
-        atualizarTabela();
-        limparCampos(campoNome, campoEmail, campoCategoria, campoCNPJ);
-    }catch (IllegalArgumentException e) {
-        JOptionPane.showMessageDialog(this, e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-    }
+            usuarioDao.salvar(usuario);
+            carregarUsuarios();
+            limparCampos(campoNome, campoEmail, campoCategoria, campoCNPJ);
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(this, e.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void editarUsuario(JTextField campoNome, JTextField campoEmail, JTextField campoCategoria, JTextField campoCNPJ) {
-        int linhaSelecionada = tabelaUsuarios.getSelectedRow();
+        int linhaSelecionada = tabelaUsuarios.getSelectedRow(); // Verifica se uma linha foi selecionada
         if (linhaSelecionada >= 0) {
+            // Obter o ID do usuário selecionado na tabela
             long id = (long) modeloTabela.getValueAt(linhaSelecionada, 0);
-            Usuario usuario = new Usuario(); // Obter o usuário pelo ID
-            usuario.setNome(campoNome.getText());
-            usuario.setEmail(campoEmail.getText());
-            usuario.setCategoria(campoCategoria.getText());
-            usuario.setCnpj(campoCNPJ.getText());
 
-            usuarioDao.atualizar(usuario);
-            atualizarTabela();
-            limparCampos(campoNome, campoEmail, campoCategoria, campoCNPJ);
+            // Buscar o usuário pelo ID
+            Usuario usuario = buscarUsuarioPorId(id);
+
+            if (usuario != null) {
+                // Atualiza os dados do usuário com os valores dos campos de texto
+                usuario.setNome(campoNome.getText());
+                usuario.setEmail(campoEmail.getText());
+                usuario.setCategoria(campoCategoria.getText());
+                usuario.setCnpj(campoCNPJ.getText());
+
+                // Tenta atualizar o usuário no arquivo de persistência
+                boolean atualizado = usuarioDao.atualizar(usuario);
+
+                if (atualizado) {
+                    // Atualizar a tabela com os novos valores
+                    carregarUsuarios();
+
+                    // Limpar os campos de entrada
+                    limparCampos(campoNome, campoEmail, campoCategoria, campoCNPJ);
+
+                    // Exibir mensagem de sucesso
+                    JOptionPane.showMessageDialog(this, "Usuário atualizado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "Erro ao atualizar o usuário.", "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Usuário não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
         } else {
             JOptionPane.showMessageDialog(this, "Selecione um usuário para editar.", "Erro", JOptionPane.ERROR_MESSAGE);
         }
@@ -124,17 +158,27 @@ public class TelaGerenciamentoUsuarios extends JFrame {
         int linhaSelecionada = tabelaUsuarios.getSelectedRow();
         if (linhaSelecionada >= 0) {
             long id = (long) modeloTabela.getValueAt(linhaSelecionada, 0);
-            Usuario usuario = new Usuario();
-            usuarioDao.deletar(usuario);
-            atualizarTabela();
+            Usuario usuario = buscarUsuarioPorId(id);
+
+            if (usuario != null) {
+                usuarioDao.deletar(usuario);
+                carregarUsuarios();
+            } else {
+                JOptionPane.showMessageDialog(this, "Usuário não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
         } else {
             JOptionPane.showMessageDialog(this, "Selecione um usuário para remover.", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void atualizarTabela() {
-        modeloTabela.setRowCount(0);
-        carregarUsuarios();
+    private Usuario buscarUsuarioPorId(long id) {
+        Set<Usuario> usuarios = usuarioDao.getAll();
+        for (Usuario usuario : usuarios) {
+            if (usuario.getId() == id) {
+                return usuario;
+            }
+        }
+        return null;
     }
 
     private void limparCampos(JTextField campoNome, JTextField campoEmail, JTextField campoCategoria, JTextField campoCNPJ) {
